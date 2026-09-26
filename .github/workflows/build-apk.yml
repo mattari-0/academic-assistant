@@ -1,90 +1,30 @@
 name: Build Android APK
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     name: Compile Flutter Android APK
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-
     steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Java Development Kit (JDK 17)
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
-
-      - name: Setup Flutter Environment
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.24.3'
           channel: 'stable'
           cache: true
-
-      - name: Generate Official Android Platform Binaries
-        run: |
-          cd mobile
-          rm -rf android
-          flutter create --org com.encg --project-name academic_assistant --platforms android .
-
-      - name: Configure Android SDK & Plugin Versions
-        run: python3 scripts/configure_android.py
-
-      - name: Restore Firebase Configuration File
+      - name: Build APK
         run: |
           mkdir -p mobile/android/app
-          cat << 'JSON' > mobile/android/app/google-services.json
-          {
-            "project_info": {
-              "project_number": "211249309472",
-              "project_id": "academic-assistant-2db16",
-              "storage_bucket": "academic-assistant-2db16.firebasestorage.app"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:211249309472:android:bccf9e92f2bfb6d90ad945",
-                  "android_client_info": {
-                    "package_name": "com.encg.academic_assistant"
-                  }
-                },
-                "oauth_client": [],
-                "api_key": [
-                  {
-                    "current_key": "AIzaSyDxL0swlaxChOM0fw4KlKvY2LtcZqumiXU"
-                  }
-                ],
-                "services": {
-                  "appinvite_service": {
-                    "other_platform_oauth_client": []
-                  }
-                }
-              }
-            ],
-            "configuration_version": "1"
-          }
-          JSON
-
-      - name: Install Mobile Dependencies
-        run: |
+          echo '{"project_info":{"project_number":"0","project_id":"encg-assistant"},"client":[{"client_info":{"mobilesdk_app_id":"1:0:android:0","android_client_info":{"package_name":"com.encg.academic_assistant"}},"oauth_client":[],"api_key":[{"current_key":"dummy"}],"services":{}}],"configuration_version":"1"}' > mobile/android/app/google-services.json
           cd mobile
           flutter pub get
-
-      - name: Compile Debug APK
-        run: |
-          cd mobile
           flutter build apk --debug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: student-assistant-debug-apk
+          name: encg-assistant-debug-apk
           path: mobile/build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 14
