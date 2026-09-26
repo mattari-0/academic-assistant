@@ -1,48 +1,39 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
+# Dependencies
+node_modules/
+admin/node_modules/
+student/node_modules/
 
-# IntelliJ / Android Studio
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# Visual Studio Code
-.vscode/
-
-# Flutter / Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
+# Build artifacts
+dist/
+admin/dist/
+student/dist/
 build/
-pubspec.lock
-
-# Android build outputs
-mobile/android/.gradle/
-mobile/android/local.properties
+mobile/build/
 mobile/android/app/build/
 **/generated/
 
-# Environment Variables & Private Secrets
+# Environment variables & secrets
 .env
 .env.*
+*.env
 *.pem
 *.key
+*key.json
 service-account-key.json
+google-services.json
+mobile/android/local.properties
+mobile/android/key.properties
 
-# Python Virtual Environments & Caches
+# Python caches
 __pycache__/
 *.py[cod]
 *$py.class
 .venv/
 venv/
 env/
+
+# IDE & OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp
