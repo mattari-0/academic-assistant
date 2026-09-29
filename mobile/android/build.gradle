@@ -13,6 +13,30 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
+subprojects { subproject ->
+    // Inject the flutter extension so plugins (like app_links) reading flutter.compileSdkVersion succeed
+    subproject.ext {
+        set("flutter", new Object() {
+            int compileSdkVersion = 35
+            int targetSdkVersion = 35
+            int minSdkVersion = 21
+            String ndkVersion = "27.0.12077973"
+        })
+    }
+    afterEvaluate {
+        if (subproject.hasProperty('android')) {
+            subproject.android {
+                if (compileSdkVersion == null) {
+                    compileSdkVersion 35
+                }
+                if (namespace == null) {
+                    namespace subproject.group
+                }
+            }
+        }
+    }
+}
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
